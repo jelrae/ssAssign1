@@ -15,9 +15,25 @@ def randPoint():
     
     return x,y
 
-def checkMandelbrot(x,y):
+def loopMadelbrot(xi, yi, x, y):
+    xt = (x**2 + y**2) + xi
+    yt = (2*x*y) + yi
+    return xt, yt
+
+def checkMandelbrot(x,y,numLoop):
+
+    xi = x
+    yi = y
     
-    print("helloworld")
+    xn = (x**2 + y**2) + xi
+    yn = (2*x*y) + yi
+
+    for i in range(0,numLoop):
+        xn, yn = loopMadelbrot(xn, yn, xi, yi)
+        if xn > 2 or yn > 2:
+            return False 
+
+    return True
     
 def createSet(s, i):
     
@@ -53,11 +69,11 @@ def main():
     s = 1000
     i = 1000
     
-    fraction, xinSet, yinSet, outSet = createSet(s, i)
+    fraction, inSet, outSet = createSet(s, i)
     
     print("The number of points in the set is %i/%i" %(fraction,s))
     plt.figure()
-    plt.plot(inSet[0], inset[1], 'bo')
+    plt.plot(inSet[0], inSet[1], 'bo')
     plt.plot(outSet[0], outSet[1], 'ro')
     plt.show()
     
