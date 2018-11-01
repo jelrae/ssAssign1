@@ -62,20 +62,34 @@ def createSet(s, i):
             outSet[1].append(y)
             
     return fraction, inSet, outSet
+
+def accuracy(smin,smax,sstep,imin,imax,istep):
+    
+    for s in range(smin,smax+1,sstep):
+        for i in range(imin,imax+1,istep):
+            print(i,s)
+            
+            fraction, inSet, outSet = createSet(s, i)
+    
+            print("The number of points in the set is %i/%i" %(fraction,s))
+            plt.figure()
+            plt.plot(inSet[0], inSet[1], 'b.')
+            #plt.plot(outSet[0], outSet[1], 'ro')
+            plt.show()
  
 def main():
     
+    smin = 100000
+    smax = 600000
+    sstep = 100000
     
-    s = 100000
-    i = 1000
+    imin = 700
+    imax = 1500
+    istep = 100
     
-    fraction, inSet, outSet = createSet(s, i)
+    accuracy(smin,smax,sstep,imin,imax,istep)
     
-    print("The number of points in the set is %i/%i" %(fraction,s))
-    plt.figure()
-    plt.plot(inSet[0], inSet[1], 'b.')
-    #plt.plot(outSet[0], outSet[1], 'ro')
-    plt.show()
+    
     
     
     
