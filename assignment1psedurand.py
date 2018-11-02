@@ -5,17 +5,23 @@ Created on Tue Oct 30 15:44:09 2018
 @author: Jordan and Nathalie
 """
 
-from random import random as rand
 import math
+import random
+import numpy as np
 import matplotlib.pyplot as plt
 
-def randPoint():
+
+def randPoint(sx, sy):
     incirc = False
     while not incirc:
-        x = rand() * 3. - 2.
-        y = rand() * 3. - 1.5
+        random.seed(sx)
+        sx = random.random()
+        x = sx * 3. - 2.
+        random.seed(sy)
+        sy = random.random()
+        y = sy * 3. - 1.5
         if math.sqrt(x**2 + y**2) <= 2:
-            return x, y
+            return x, y, sx, sy
 
 def loopMadelbrot(x, y, xi, yi):
     xt = (x**2 - y**2) + xi
@@ -46,10 +52,11 @@ def createSet(s, i):
     inSet.append([])
     outSet.append([])
     outSet.append([])
-    
+    sx = 7536
+    sy = 8354
     for j in range(s):
-    
-        x,y = randPoint()
+
+        x,y,sx,sy = randPoint(sx, sy)
         
         check = checkMandelbrot(x,y,i)
         
@@ -64,43 +71,23 @@ def createSet(s, i):
             outSet[1].append(y)
             
     return fraction, inSet, outSet
-
-def accuracy(smin,smax,sstep,imin,imax,istep):
-    
-    for s in range(smin,smax+1,sstep):
-        for i in range(imin,imax+1,istep):
-            print(i,s)
-            
-            fraction, inSet, outSet = createSet(s, i)
-    
-            print("The number of points in the set is %i/%i" %(fraction,s))
-            plt.figure()
-            plt.plot(inSet[0], inSet[1], 'b.')
-            #plt.plot(outSet[0], outSet[1], 'ro')
-            plt.show()
  
 def main():
+
+    for x in np.arange(500, 10000, 500):
+
+        s = 100000 #Number of points
+        i = x #Numbber of times through loop
+
+        fraction, inSet, outSet = createSet(s, i)
+
+        print("The number of points in the set is %i/%i" %(fraction,s))
+        plt.figure(x/500)
+        plt.title("Madolbrot Set with {} points and {} loops".format(s, i))
+        plt.plot(inSet[0], inSet[1], 'b.')
+        plt.show()
     
-    smin = 100000
-    smax = 600000
-    sstep = 100000
-    
-    imin = 700
-    imax = 1500
-    istep = 100
-    
-    accuracy(smin,smax,sstep,imin,imax,istep)
-    
-    
-<<<<<<< Updated upstream
-=======
-    print("The number of points in the set is %i/%i" %(fraction,s))
-    plt.figure()
-    plt.plot(inSet[0], inSet[1], 'b.')
-    plt.show()
->>>>>>> Stashed changes
-    
-    
+    print("Done")
     
 if __name__ == "__main__":
     main()
