@@ -11,17 +11,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def randPoint(sx, sy):
+def randPoint():
     incirc = False
     while not incirc:
-        random.seed(sx)
         sx = random.random()
         x = sx * 3. - 2.
-        random.seed(sy)
         sy = random.random()
         y = sy * 3. - 1.5
         if math.sqrt(x**2 + y**2) <= 2:
-            return x, y, sx, sy
+            return x, y,
 
 def loopMadelbrot(x, y, xi, yi):
     xt = (x**2 - y**2) + xi
@@ -43,7 +41,7 @@ def checkMandelbrot(x,y,numLoop):
 
     return True
     
-def createSet(s, i,sx,sy):
+def createSet(s, i):
     
     fraction = 0
     inSet = []
@@ -54,7 +52,7 @@ def createSet(s, i,sx,sy):
     outSet.append([])
     for j in range(s):
 
-        x,y,sx,sy = randPoint(sx, sy)
+        x,y= randPoint()
 
         check = checkMandelbrot(x,y,i)
 
@@ -71,26 +69,18 @@ def createSet(s, i,sx,sy):
     return fraction, inSet, outSet
  
 def main():
-    sxarry = [7536, 4321, 6843, 5769]
-    syarry = [8354, 4682, 6779, 3567]
 
-    for k in range(0, len(sxarry)):
-        rx = sxarry[k]
-        ry = syarry[k]
-        print("Seed: %i"%(k))
-        for x in np.arange(500, 10000, 500):
+    s = 10000000 #Number of points
+    i = 5500
 
-            s = 100000 #Number of points
-            i = x #Numbber of times through loop
+    fraction, inSet, outSet = createSet(s, i)
 
-            fraction, inSet, outSet = createSet(s, i, rx, ry)
+    print("With %i itterations, the number of points in the set is %i/%i" %(i,fraction,s))
+    plt.figure()
+    plt.title("Madolbrot Set with {} points and {} loops".format(s, i))
+    plt.plot(inSet[0], inSet[1], 'b.')
+    plt.show()
 
-            print("With %i itterations, the number of points in the set is %i/%i" %(i,fraction,s))
-            #plt.figure(x/500)
-            #plt.title("Madolbrot Set with {} points and {} loops".format(s, i))
-            #plt.plot(inSet[0], inSet[1], 'b.')
-            #plt.show()
-    
     print("Done")
     
 if __name__ == "__main__":
