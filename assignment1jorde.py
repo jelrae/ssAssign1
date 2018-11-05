@@ -54,6 +54,14 @@ def createSet(s, i):
 
         x,y= randPoint()
 
+        newcheck = False
+
+        while not newcheck:
+            if x in inSet[0] and y in inSet[1]:
+                x, y = randPoint()
+            else:
+                newcheck = True
+
         check = checkMandelbrot(x,y,i)
 
         if check == True:
@@ -70,7 +78,7 @@ def createSet(s, i):
  
 def main():
 
-    s = 10000000 #Number of points
+    s = 1000000000 #Number of points
     i = 5500
 
     fraction, inSet, outSet = createSet(s, i)
