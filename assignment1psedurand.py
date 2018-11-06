@@ -9,6 +9,7 @@ import math
 import random
 import numpy as np
 import matplotlib.pyplot as plt
+import csv
 
 
 def randPoint(sx, sy):
@@ -69,28 +70,48 @@ def createSet(s, i,sx,sy):
             outSet[1].append(y)
 
     return fraction, inSet, outSet
+
+def save(results):
+    """ Saves the results to a csv file. """
+        
+    filename = 'data/results.csv'
+        
+    with open(filename, 'a', newline = '') as csvfile:
+        writer = csv.writer(csvfile, delimiter=',', quotechar='"')
+        
+        for row in results:
+            writer.writerow(row)
+               
+    # List is reset for next set of reflections
+    return []
  
 def main():
     sxarry = [7536, 4321, 6843, 5769]
     syarry = [8354, 4682, 6779, 3567]
+    #sxarry = [7536]
+    #syarry = [8354]
+    
+    results = []
 
     for k in range(0, len(sxarry)):
         rx = sxarry[k]
         ry = syarry[k]
         print("Seed: %i"%(k))
-        for x in np.arange(500, 10000, 500):
+        for x in np.arange(500, 5000, 500):
 
             s = 100000 #Number of points
             i = x #Numbber of times through loop
 
             fraction, inSet, outSet = createSet(s, i, rx, ry)
 
-            print("With %i itterations, the number of points in the set is %i/%i" %(i,fraction,s))
+            results.append([i,s,fraction,rx,ry])
+            print("With %i iterations, the number of points in the set is %i/%i" %(i,fraction,s))
             #plt.figure(x/500)
             #plt.title("Madolbrot Set with {} points and {} loops".format(s, i))
             #plt.plot(inSet[0], inSet[1], 'b.')
             #plt.show()
     
+    results = save(results)
     print("Done")
     
 if __name__ == "__main__":
