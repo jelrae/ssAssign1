@@ -33,7 +33,7 @@ def hypercube(s):
     xs = []
     ys = []
     
-    for x in np.arange(-2., 1.+deltax, deltax):
+    for x in np.arange(-2., 1., deltax):
         
         xs.append(random.random()*deltax + x)
         
@@ -45,9 +45,44 @@ def hypercube(s):
     random.shuffle(ys)
     
     return xs,ys
+
+def orthogonal(s):
+    
+    deltax = 3. / s
+    deltay = 3. / s
+    
+    xs = []
+    ys = []
+    
+    subspaces = 4
+    
+    for i in range(subspaces):
+        xs.append([])
+        ys.append([])
             
+        
+    for x in np.arange(-2., 1., deltax):
+        xs[int((x+2)*subspaces/3.)].append(random.random()*deltax + x)
+        
+    for y in np.arange(-1.5, 1.5, deltay):
+        ys[int((y+1.5)*subspaces/3.)].append(random.random()*deltay + y)
+        
+    for i in range(subspaces):
+        random.shuffle(xs[i])
+        random.shuffle(ys[i])
+        
+    xfinal = []
+    yfinal = []
+        
+    for i in range(subspaces):
+        for j in range(subspaces):
+            
+            
+        
 
 def loopMadelbrot(x, y, xi, yi):
+
+
     xt = (x**2 - y**2) + xi
     yt = (2*x*y) + yi
     return xt, yt
@@ -115,8 +150,10 @@ def save(results):
  
 def main():
     
+    orthogonal(100)
+    """
     # Set this very high to create a loop that runs all night
-    for l in range(1):
+    for l in range(40):
         results = []
     
         for j in range(3,6):
@@ -127,14 +164,15 @@ def main():
                 i = x #Numbber of times through loop
                 
                 # createSet for random, createHypercube for hypercube
-                fraction = createHypercube(s, i)
+                fraction = createSet(s, i)
                 
                 # argument 0 is "random" for random and "hypdercube" for hypercube
-                results.append(["hypercube",i,s,fraction])
+                results.append(["random",i,s,fraction])
                 print("With %i iterations, the number of points in the set is %i/%i" %(i,fraction,s))
         
         results = save(results)
         print("Done")
+    """
     
 if __name__ == "__main__":
     main()
