@@ -10,6 +10,7 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 import csv
+import sys
 
 
 def randPoint():
@@ -54,18 +55,37 @@ def orthogonal(s):
     xs = []
     ys = []
     
-    subspaces = 4
+    subspaces = 10
+    
+    if s % (subspaces**2) !=0:
+        print("Error: s % subspaces^2 has to be 0.")
+
+        sys.exit(1)
+    
+    perarea = s/subspaces
     
     for i in range(subspaces):
         xs.append([])
         ys.append([])
             
-        
+    
     for x in np.arange(-2., 1., deltax):
-        xs[int((x+2)*subspaces/3.)].append(random.random()*deltax + x)
+        index = int((x+2)*subspaces/3.)
+        
+        if len(xs[index]) < perarea:
+            xs[index].append(random.random()*deltax + x)
+        
+        else:
+            xs[index+1].append(random.random()*deltax + x)
         
     for y in np.arange(-1.5, 1.5, deltay):
-        ys[int((y+1.5)*subspaces/3.)].append(random.random()*deltay + y)
+        index = int((y+1.5)*subspaces/3.)
+        
+        if len(ys[index]) < perarea:
+            ys[index].append(random.random()*deltay + y)
+            
+        else:
+            ys[index+1].append(random.random()*deltay + y)
         
     for i in range(subspaces):
         random.shuffle(xs[i])
@@ -75,9 +95,20 @@ def orthogonal(s):
     yfinal = []
         
     for i in range(subspaces):
-        for j in range(subspaces):
+        
+        therange = int(perarea*i/subspaces)
+        
+        for k in range(subspaces):
             
+            for l in range(therange,therange+int(perarea/subspaces)):
+                
+                xfinal.append(xs[k][l])
+        
+        for j in range(int(perarea)):
             
+            yfinal.append(ys[i][j])
+            
+    return xfinal, yfinal
         
 
 def loopMadelbrot(x, y, xi, yi):
@@ -121,7 +152,7 @@ def createSet(s, i):
 def createHypercube(s,i):
     
     fraction = 0
-    xs,ys = hypercube(s)
+    xs,ys = orthogonal(s)
     
     for j in range(s):
 
@@ -150,10 +181,8 @@ def save(results):
  
 def main():
     
-    orthogonal(100)
-    """
     # Set this very high to create a loop that runs all night
-    for l in range(40):
+    for l in range(1):
         results = []
     
         for j in range(3,6):
@@ -164,15 +193,14 @@ def main():
                 i = x #Numbber of times through loop
                 
                 # createSet for random, createHypercube for hypercube
-                fraction = createSet(s, i)
+                fraction = createHypercube(s, i)
                 
                 # argument 0 is "random" for random and "hypdercube" for hypercube
-                results.append(["random",i,s,fraction])
+                results.append(["orthogonal",i,s,fraction])
                 print("With %i iterations, the number of points in the set is %i/%i" %(i,fraction,s))
         
         results = save(results)
         print("Done")
-    """
     
 if __name__ == "__main__":
     main()
