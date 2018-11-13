@@ -22,7 +22,7 @@ def randPoint():
         random.seed()
         sy = random.random()
         y = sy * 3. - 1.5
-        if math.sqrt(x**2 + y**2) <= 2:
+        if x**2 + y**2 <= 4:
             return x, y
     
         
@@ -111,7 +111,7 @@ def orthogonal(s):
     return xfinal, yfinal
         
 
-def loopMadelbrot(x, y, xi, yi):
+def loopMandelbrot(x, y, xi, yi):
 
 
     xt = (x**2 - y**2) + xi
@@ -123,12 +123,12 @@ def checkMandelbrot(x,y,numLoop):
     xi = x
     yi = y
     
-    xn = (x**2 + y**2) + xi
+    xn = (x**2 - y**2) + xi
     yn = (2*x*y) + yi
 
     for i in range(0,numLoop):
-        xn, yn = loopMadelbrot(xn, yn, xi, yi)
-        if abs(xn) > 2 or abs(yn) > 2:
+        xn, yn = loopMandelbrot(xn, yn, xi, yi)
+        if xn**2 + yn**2 >=4:
             return False 
 
     return True
@@ -136,6 +136,7 @@ def checkMandelbrot(x,y,numLoop):
 def createSet(s, i):
     
     fraction = 0
+    results = []
     
     for j in range(s):
 
@@ -146,13 +147,20 @@ def createSet(s, i):
         if check == True:
 
             fraction += 1
+            
+        if j % 1000 == 0:
+            
+            results.append(["random",i,j,s,fraction])
 
-    return fraction
+    results.append(["random",i,s,s,fraction])
+
+    return fraction, results
 
 def createHypercube(s,i):
     
     fraction = 0
-    xs,ys = orthogonal(s)
+    xs,ys = hypercube(s)
+    results = []
     
     for j in range(s):
 
@@ -162,13 +170,18 @@ def createHypercube(s,i):
         if check == True:
 
             fraction += 1
+            
+        if j % 1000 == 0:
+            
+            results.append(["random",i,j,s,fraction])
 
-    return fraction
+    results.append(["random",i,s,s,fraction])
+    return fraction, results
 
 def save(results):
     """ Saves the results to a csv file. """
         
-    filename = 'data/resultsnightloop.csv'
+    filename = 'data/resultsnightloopagain.csv'
         
     with open(filename, 'a', newline = '') as csvfile:
         writer = csv.writer(csvfile, delimiter=',', quotechar='"')
@@ -181,25 +194,28 @@ def save(results):
  
 def main():
     
+    randoms = [1000, 5000, 10000, 20000, 30000]
+    hypers = [100, 500, 1000, 5000, 10000]
+    
     # Set this very high to create a loop that runs all night
-    for l in range(1):
+    for l in range(33):
         results = []
     
-        for j in range(3,6):
+        for j in randoms:
             print("Loop number: %i"%(l))
-            for x in np.arange(2000, 7000, 500):
+            for x in np.arange(3000, 6000, 500):
     
-                s = 10**j #Number of points
+                s = j #Number of points
                 i = x #Numbber of times through loop
                 
                 # createSet for random, createHypercube for hypercube
-                fraction = createHypercube(s, i)
+                fraction, results = createSet(s, i)
                 
                 # argument 0 is "random" for random and "hypdercube" for hypercube
-                results.append(["orthogonal",i,s,fraction])
+                #results.append(["random",i,s,fraction])
                 print("With %i iterations, the number of points in the set is %i/%i" %(i,fraction,s))
         
-        results = save(results)
+                results = save(results)
         print("Done")
     
 if __name__ == "__main__":
