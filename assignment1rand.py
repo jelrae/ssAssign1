@@ -159,6 +159,7 @@ def createSet(s, i):
 def createHypercube(s,i):
     
     fraction = 0
+    # hypercube(s) for hypercube, orthogonal(s) for orthogonal
     xs,ys = hypercube(s)
     results = []
     
@@ -173,9 +174,9 @@ def createHypercube(s,i):
             
         if j % 1000 == 0:
             
-            results.append(["random",i,j,s,fraction])
+            results.append(["hypercube",i,j,s,fraction])
 
-    results.append(["random",i,s,s,fraction])
+    results.append(["hypercube",i,s,s,fraction])
     return fraction, results
 
 def save(results):
