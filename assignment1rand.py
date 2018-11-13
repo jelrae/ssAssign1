@@ -3,6 +3,8 @@
 Created on Tue Oct 30 15:44:09 2018
 
 @author: Jordan and Nathalie
+
+area for random: 8.3765
 """
 
 import math
@@ -72,6 +74,8 @@ def orthogonal(s):
     for x in np.arange(-2., 1., deltax):
         index = int((x+2)*subspaces/3.)
         
+        # This if/else statement is necessary because the index is sometimes
+        # incorrect due to rounding errors
         if len(xs[index]) < perarea:
             xs[index].append(random.random()*deltax + x)
         
