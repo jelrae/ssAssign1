@@ -15,6 +15,7 @@ def makePlots(alist, rangelist, area,typeof):
     
     islist = []
     ilist = [3000,3500,4000,4500,5000,5500]
+    variancelist = []
     
     for i in ilist:
         
@@ -43,11 +44,12 @@ def makePlots(alist, rangelist, area,typeof):
             yerror.append(error)
             
         
-        for y in ys:
+        for p in range(len(ys)):
             
-            y = abs(y - truearea)
+            ys[p] = abs(ys[p] - truearea)
         
         islist.append(ys)
+        variancelist.append(yerror)
         
         plt.figure()
         plt.errorbar(rangelist,ys,yerr = yerror,fmt='o')
@@ -56,7 +58,7 @@ def makePlots(alist, rangelist, area,typeof):
         plt.title("The area as a function of the number of samples using %s sampling with %i iterations."%(typeof,i))
     
     fig, ax = plt.subplots()
-    im = ax.imshow(islist)
+    im = ax.imshow(islist)#,extent=[rangelist[0],rangelist[len(rangelist)-1],ilist[0],ilist[len(ilist)-1]])
     
     # We want to show all ticks...
     ax.set_xticks(np.arange(len(rangelist)))
@@ -64,6 +66,33 @@ def makePlots(alist, rangelist, area,typeof):
     # ... and label them with the respective list entries
     ax.set_xticklabels(rangelist)
     ax.set_yticklabels(ilist)
+    
+    plt.title("The absolute difference between the outcome of the simulation \n and the literature value using %s sampling."%(typeof))
+    plt.xlabel("samples")
+    plt.ylabel("iterations")
+    fig.colorbar(im, orientation = 'vertical', label = "Absolute difference in area")
+    
+    # Rotate the tick labels and set their alignment.
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+             rotation_mode="anchor")
+    
+    plt.show()
+    
+    fig, ax = plt.subplots()
+    
+    im = ax.imshow(variancelist)
+    
+    # We want to show all ticks...
+    ax.set_xticks(np.arange(len(rangelist)))
+    ax.set_yticks(np.arange(len(ilist)))
+    # ... and label them with the respective list entries
+    ax.set_xticklabels(rangelist)
+    ax.set_yticklabels(ilist)
+    
+    plt.title("The variance in all point of the simulation using %s sampling."%(typeof))
+    plt.xlabel("samples")
+    plt.ylabel("iterations")
+    fig.colorbar(im, orientation = 'vertical', label = "Variance")
     
     # Rotate the tick labels and set their alignment.
     plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
@@ -107,11 +136,14 @@ def nonantithetic():
     
 def makeAntiPlots(alist, blist, rangelist, area,typeof):
     
-    for i in range(3000,6000,500):
+    islist = []
+    ilist = [3000,3500,4000,4500,5000,5500]
+    variancelist = []
+    
+    for i in ilist:
         
         gem = []
         variance = []
-        ss = []
         
         for s in rangelist:
             
@@ -121,7 +153,6 @@ def makeAntiPlots(alist, blist, rangelist, area,typeof):
             xerror = 0
             yerror = 0
             n = 0
-            ss .append(s)
             
             for m in range(len(alist)):
                 if int(alist[m][1]) == i and int(alist[m][3]) == s:
@@ -145,12 +176,60 @@ def makeAntiPlots(alist, blist, rangelist, area,typeof):
             var = (xerror + yerror + 2 * cov) / 4.
             variance.append(var)
             
+        for p in range(len(gem)):
+            
+            gem[p] = abs(gem[p] - truearea)
+        
+        islist.append(gem)
+        variancelist.append(variance)
         
         plt.figure()
-        plt.errorbar(ss,gem,yerr = variance,fmt='o')
+        plt.errorbar(rangelist,gem,yerr = variance,fmt='o')
         plt.xlabel("samples")
         plt.ylabel("area")
         plt.title("The area as a function of the number of samples using %s sampling with %i iterations."%(typeof,i))
+    
+    fig, ax = plt.subplots()
+    im = ax.imshow(islist)#,extent=[rangelist[0],rangelist[len(rangelist)-1],ilist[0],ilist[len(ilist)-1]])
+    
+    # We want to show all ticks...
+    ax.set_xticks(np.arange(len(rangelist)))
+    ax.set_yticks(np.arange(len(ilist)))
+    # ... and label them with the respective list entries
+    ax.set_xticklabels(rangelist)
+    ax.set_yticklabels(ilist)
+    
+    plt.title("The absolute difference between the outcome of the simulation \n and the literature value using %s sampling."%(typeof))
+    plt.xlabel("samples")
+    plt.ylabel("iterations")
+    fig.colorbar(im, orientation = 'vertical', label = "Absolute difference in area")
+    
+    # Rotate the tick labels and set their alignment.
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+             rotation_mode="anchor")
+    
+    plt.show()
+    
+    fig, ax = plt.subplots()
+    
+    im = ax.imshow(variancelist)
+    
+    # We want to show all ticks...
+    ax.set_xticks(np.arange(len(rangelist)))
+    ax.set_yticks(np.arange(len(ilist)))
+    # ... and label them with the respective list entries
+    ax.set_xticklabels(rangelist)
+    ax.set_yticklabels(ilist)
+    
+    plt.title("The variance in all point of the simulation using %s sampling."%(typeof))
+    plt.xlabel("samples")
+    plt.ylabel("iterations")
+    fig.colorbar(im, orientation = 'vertical', label = "Variance")
+    
+    # Rotate the tick labels and set their alignment.
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+             rotation_mode="anchor")
+    
     plt.show()
     
 def antithetic():
@@ -194,8 +273,6 @@ def antithetic():
             if row[0] == "orthoginal2":
                 orthogonals2.append(row)
             
-    print(len(orthogonals1))
-    print(len(orthogonals2))
     makeAntiPlots(randoms1,randoms3,randomlist,area2,"random")
     makeAntiPlots(randoms2,randoms4,hyperlist,area2,"random")
     makeAntiPlots(hypers1,hypers2,hyperlist,area1,"latin hypercube")
@@ -229,7 +306,6 @@ def merge():
                 
                 if row[0] == "random1":
                     row[0] = "random2"
-                    print(row)
                         
                 elif row[0] == "random2":
                     row[0] = "random4"
@@ -252,7 +328,6 @@ def merge():
         for row in reader:
             
             if row[2] == row[3]:
-                print("kom ik heir")
                 thelist.append(row)
                 
     with open("data/resultsantithetic.csv", 'a', newline = '') as csvfile:
@@ -263,6 +338,6 @@ def merge():
                 
 nonantithetic()
 
-#antithetic()
+antithetic()
                 
 #merge()
