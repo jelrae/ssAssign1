@@ -25,8 +25,8 @@ def randPoint():
         vy = 1-sy
         y = sy * 1.5
         v = vy * 1.5
-        # if x**2 + y**2 <= 4 and u**2 + v**2 <= 4:
-        #     return x, y, u, v
+        if x**2 + y**2 <= 4 and u**2 + v**2 <= 4:
+            return x, y, u, v
         return x, y, u, v
 
 def loopMadelbrot(x, y, xi, yi):
@@ -146,7 +146,7 @@ def createSet(s, i):
     return fraction, inSet, outSet
  
 def main():
-    s = 250000 #Number of points
+    s = 25000 #Number of points
     iloop = 1000 #Number of itterations through check
 
     areaCirc = math.pi * 4
