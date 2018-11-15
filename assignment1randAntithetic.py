@@ -211,7 +211,7 @@ def createHypercube(s,i):
     fraction1 = 0
     fraction2 = 0
     # hypercube(s) for hypercube, orthogonal(s) for orthogonal
-    xs,ys, us, vs = hypercube(s)
+    xs,ys, us, vs = orthogonal(s)
     results = []
     
     for j in range(s):
@@ -240,7 +240,7 @@ def createHypercube(s,i):
 def save(results):
     """ Saves the results to a csv file. """
         
-    filename = 'data/resultsnightloop_jordanrandom.csv'
+    filename = 'data/resultsnightloop_jordanorth.csv'
         
     with open(filename, 'a', newline = '') as csvfile:
         writer = csv.writer(csvfile, delimiter=',', quotechar='"')
@@ -253,15 +253,15 @@ def save(results):
  
 def main():
     
-    randoms = [1000, 5000, 10000, 20000, 30000]
-    #hypers = [100, 500, 1000, 5000, 10000]
+    #randoms = [1000, 5000, 10000, 20000, 30000]
+    hypers = [100, 500, 1000, 5000, 10000]
     
     # Set this very high to create a loop that runs all night
     for l in range(100):
         results = []
 
         # change to hypers if running hypers
-        for j in randoms:
+        for j in hypers:
             print("Loop number: %i"%(l))
             for x in np.arange(3000, 6000, 500):
     

@@ -109,7 +109,7 @@ def orthogonal(s):
             us[index + 1].append(ur * deltax + x)
         
     for y in np.arange(0, 1.5, deltay):
-        index = int((y+1.5)*subspaces/1.5)
+        index = int((y)*subspaces/1.5)
         
         if len(ys[index]) < perarea:
             yr = random.random()
@@ -211,7 +211,7 @@ def createHypercube(s,i):
     fraction1 = 0
     fraction2 = 0
     # hypercube(s) for hypercube, orthogonal(s) for orthogonal
-    xs,ys, us, vs = hypercube(s)
+    xs,ys, us, vs = orthogonal(s)
     results = []
     
     for j in range(s):
@@ -230,17 +230,17 @@ def createHypercube(s,i):
             
         if j % 1000 == 0:
             
-            results.append(["hypercube1",i,j,s,fraction1])
-            results.append(["hypercube2", i, j, s, fraction2])
+            results.append(["orthoginal1",i,j,s,fraction1])
+            results.append(["orthoginal2", i, j, s, fraction2])
 
-    results.append(["hypercube1",i,s,s,fraction1])
-    results.append(["hypercube2", i, s, s, fraction2])
+    results.append(["orthoginal1",i,s,s,fraction1])
+    results.append(["orthoginal2", i, s, s, fraction2])
     return fraction1, fraction2, results
 
 def save(results):
     """ Saves the results to a csv file. """
         
-    filename = 'data/resultsnightloop_jordanhyper.csv'
+    filename = 'data/resultsnightloop_jordanorth.csv'
         
     with open(filename, 'a', newline = '') as csvfile:
         writer = csv.writer(csvfile, delimiter=',', quotechar='"')
