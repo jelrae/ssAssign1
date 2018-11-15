@@ -128,7 +128,7 @@ def makeAntiPlots(alist, blist, rangelist, area,typeof):
         plt.xlabel("samples")
         plt.ylabel("area")
         plt.title("The area as a function of the number of samples using %s sampling with %i iterations."%(typeof,i))
-    plt.show()
+    #plt.show()
     
 def antithetic():
     # The path length distribution is taken from the file
@@ -166,13 +166,14 @@ def antithetic():
                 hypers1.append(row)
             if row[0] == "hypercube2":
                 hypers2.append(row)
-            if row[0] == "orthogonal1":
+            if row[0] == "orthoginal1":
+                print("here")
                 orthogonals1.append(row)
-            if row[0] == "orthogonal2":
+            if row[0] == "orthoginal2":
                 orthogonals2.append(row)
             
-    print(len(randoms3))
-    print(len(randoms4))
+    print(len(orthogonals1))
+    print(len(orthogonals2))
     makeAntiPlots(randoms1,randoms3,randomlist,area2,"random")
     makeAntiPlots(randoms2,randoms4,hyperlist,area2,"random")
     makeAntiPlots(hypers1,hypers2,hyperlist,area1,"latin hypercube")
@@ -203,16 +204,13 @@ def merge():
         for row in reader:
             
             if row[2] == row[3]:
-                print(row[0])
                 
                 if row[0] == "random1":
-                    print("never")
                     row[0] = "random2"
                     print(row)
                         
                 elif row[0] == "random2":
                     row[0] = "random4"
-                    print(row)
                 thelist.append(row)
                 
     with open("data/resultsnightloop_jordanhyper.csv", 'r') as csvfile:
@@ -232,8 +230,8 @@ def merge():
         for row in reader:
             
             if row[2] == row[3]:
-                
-                thelist.append
+                print("kom ik heir")
+                thelist.append(row)
                 
     with open("data/resultsantithetic.csv", 'a', newline = '') as csvfile:
             writer = csv.writer(csvfile, delimiter=',', quotechar='"')
@@ -243,4 +241,6 @@ def merge():
                 
 #nonantithetic()
 
-antithetic()
+#antithetic()
+                
+merge()
