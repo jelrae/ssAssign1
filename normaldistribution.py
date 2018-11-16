@@ -117,23 +117,23 @@ def computeList(list1,list2,area,i):
 def makePlot(random1,random2,hypercube,orthogonal):
     
     plt.figure()
-    plt.hist(random1)
+    plt.hist(random1,20)
     plt.title("A histogram of the spread of found areas for s=10000 and i=5500 using random sampling")
     plt.xlabel("Area")
     
     
     plt.figure()
-    plt.hist(random2)
+    plt.hist(random2,20)
     plt.title("A histogram of the spread of found areas for s=10000 and i=5500 using random sampling")
     plt.xlabel("Area")
     
     plt.figure()
-    plt.hist(hypercube)
+    plt.hist(hypercube,20)
     plt.title("A histogram of the spread of found areas for s=10000 and i=5500 using latin hypercube sampling")
     plt.xlabel("Area")
     
     plt.figure()
-    plt.hist(orthogonal)
+    plt.hist(orthogonal,20)
     plt.title("A histogram of the spread of found areas for s=10000 and i=5500 using latin hypercube sampling")
     plt.xlabel("Area")
     

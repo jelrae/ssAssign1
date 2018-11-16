@@ -8,12 +8,14 @@ Created on Tue Nov 13 17:48:47 2018
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
+from copy import deepcopy
 
 truearea = 1.50659
 
 def makePlots(alist, rangelist, area,typeof):
     
     islist = []
+    arealist = []
     ilist = [3000,3500,4000,4500,5000,5500]
     variancelist = []
     
@@ -43,7 +45,7 @@ def makePlots(alist, rangelist, area,typeof):
             error = (error / n) ** 0.5
             yerror.append(error)
             
-        
+        arealist.append(deepcopy(ys))
         for p in range(len(ys)):
             
             ys[p] = abs(ys[p] - truearea)
@@ -57,17 +59,30 @@ def makePlots(alist, rangelist, area,typeof):
         plt.ylabel("area")
         plt.title("The area as a function of the number of samples using %s sampling with %i iterations."%(typeof,i))
     
-    fig, ax = plt.subplots()
-    im = ax.imshow(islist)#,extent=[rangelist[0],rangelist[len(rangelist)-1],ilist[0],ilist[len(ilist)-1]])
+    newlist = []
+    newarealist = []
+    
+    for i in range(len(islist),0,-1):
+        
+        newlist.append(islist[i-1])
+        newarealist.append(arealist[i-1])
+    
+    fig, ax = plt.subplots(figsize=(7,6))
+    im = ax.imshow(newlist)#,extent=[rangelist[0],rangelist[len(rangelist)-1],ilist[0],ilist[len(ilist)-1]])
     
     # We want to show all ticks...
     ax.set_xticks(np.arange(len(rangelist)))
     ax.set_yticks(np.arange(len(ilist)))
     # ... and label them with the respective list entries
     ax.set_xticklabels(rangelist)
-    ax.set_yticklabels(ilist)
+    ax.set_yticklabels(reversed(ilist))
     
-    plt.title("The absolute difference between the outcome of the simulation \n and the literature value using %s sampling."%(typeof))
+    for i in range(len(ilist)):
+        for j in range(len(rangelist)):
+            ax.text(j, i, "%.5f"%(newarealist[i][j]),
+                           ha="center", va="center", color="w")
+    
+    plt.title("The absolute difference between the outcome of \nthe simulation and the literature \nvalue using %s sampling."%(typeof))
     plt.xlabel("samples")
     plt.ylabel("iterations")
     fig.colorbar(im, orientation = 'vertical', label = "Absolute difference in area")
@@ -78,7 +93,7 @@ def makePlots(alist, rangelist, area,typeof):
     
     plt.show()
     
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(7,6))
     
     im = ax.imshow(variancelist)
     
@@ -87,9 +102,14 @@ def makePlots(alist, rangelist, area,typeof):
     ax.set_yticks(np.arange(len(ilist)))
     # ... and label them with the respective list entries
     ax.set_xticklabels(rangelist)
-    ax.set_yticklabels(ilist)
+    ax.set_yticklabels(reversed(ilist))
     
-    plt.title("The variance in all point of the simulation using %s sampling."%(typeof))
+    for i in range(len(ilist)):
+        for j in range(len(rangelist)):
+            ax.text(j, i, "%.5f"%(variancelist[i][j]),
+                           ha="center", va="center", color="w")
+    
+    plt.title("The variance in all point of the \nsimulation using %s sampling."%(typeof))
     plt.xlabel("samples")
     plt.ylabel("iterations")
     fig.colorbar(im, orientation = 'vertical', label = "Variance")
@@ -99,6 +119,7 @@ def makePlots(alist, rangelist, area,typeof):
              rotation_mode="anchor")
     
     plt.show()
+    return variancelist
 
 def nonantithetic():
     # The path length distribution is taken from the file
@@ -108,7 +129,7 @@ def nonantithetic():
     hypers = []
     orthogonals = []
     
-    randomlist = [1000,5000,10000,20000,30000]
+    randomlist = [100,500,1000,5000,10000,20000,30000]
     hyperlist = [100,500,1000,5000,10000]
     
     area1 = 9
@@ -124,19 +145,38 @@ def nonantithetic():
                 randoms.append(row)
             if row[0] == "random2":
                 randoms2.append(row)
+                
+                if int(row[3]) == 100 or int(row[3]) == 500:
+                    randoms.append(row)
             if row[0] == "hypercube":
                 hypers.append(row)
             if row[0] == "orthogonal":
                 orthogonals.append(row)
             
-    makePlots(randoms,randomlist,area2,"random")
-    makePlots(randoms2,hyperlist,area2,"random")
-    makePlots(hypers,hyperlist,area1,"latin hypercube")
-    makePlots(orthogonals,hyperlist,area1,"orthogonal")
+    var1 = makePlots(randoms,randomlist,area2,"random")
+    var2 = makePlots(randoms2,hyperlist,area2,"random")
+    var3 = makePlots(hypers,hyperlist,area1,"latin hypercube")
+    var4 = makePlots(orthogonals,hyperlist,area1,"orthogonal")
+    
+    somelist = [var1,var3,var4]
+    
+    ilist = [3000,3500,4000,4500,5000,5500]
+    sampleslist = []
+    
+    for var in range(len(somelist)):
+        sampleslist.append([])
+        
+        for j in range(len(ilist)):
+            
+            sampleslist[var].append(somelist[var][j][0])
+    
+    variancePlot([var1[len(var1)-1],var3[len(var3)-1],var4[len(var4)-1]],hyperlist,randomlist,"samples","i",5500)
+    variancePlot(sampleslist,ilist,ilist,"iterations","s",100)
     
 def makeAntiPlots(alist, blist, rangelist, area,typeof):
     
     islist = []
+    arealist = []
     ilist = [3000,3500,4000,4500,5000,5500]
     variancelist = []
     
@@ -176,10 +216,13 @@ def makeAntiPlots(alist, blist, rangelist, area,typeof):
             var = (xerror + yerror + 2 * cov) / 4.
             variance.append(var)
             
+        arealist.append(deepcopy(gem))
+        #print(arealist)
+        
         for p in range(len(gem)):
             
             gem[p] = abs(gem[p] - truearea)
-        
+        #print(arealist)
         islist.append(gem)
         variancelist.append(variance)
         
@@ -189,17 +232,29 @@ def makeAntiPlots(alist, blist, rangelist, area,typeof):
         plt.ylabel("area")
         plt.title("The area as a function of the number of samples using %s sampling with %i iterations."%(typeof,i))
     
-    fig, ax = plt.subplots()
-    im = ax.imshow(islist)#,extent=[rangelist[0],rangelist[len(rangelist)-1],ilist[0],ilist[len(ilist)-1]])
+    newlist = []
+    newarealist = []
+    for i in range(len(islist),0,-1):
+        
+        newlist.append(islist[i-1])
+        newarealist.append(arealist[i-1])
+    #print(newarealist)
+    fig, ax = plt.subplots(figsize=(7,6))
+    im = ax.imshow(newlist)#,extent=[rangelist[0],rangelist[len(rangelist)-1],ilist[0],ilist[len(ilist)-1]])
     
     # We want to show all ticks...
     ax.set_xticks(np.arange(len(rangelist)))
     ax.set_yticks(np.arange(len(ilist)))
     # ... and label them with the respective list entries
     ax.set_xticklabels(rangelist)
-    ax.set_yticklabels(ilist)
+    ax.set_yticklabels(reversed(ilist))
     
-    plt.title("The absolute difference between the outcome of the simulation \n and the literature value using %s sampling."%(typeof))
+    for i in range(len(ilist)):
+        for j in range(len(rangelist)):
+            ax.text(j, i, "%.5f"%(newarealist[i][j]),
+                           ha="center", va="center", color="w")
+    
+    plt.title("The absolute difference between the outcome of the simulation \nand the literature value using %s sampling."%(typeof))
     plt.xlabel("samples")
     plt.ylabel("iterations")
     fig.colorbar(im, orientation = 'vertical', label = "Absolute difference in area")
@@ -210,7 +265,7 @@ def makeAntiPlots(alist, blist, rangelist, area,typeof):
     
     plt.show()
     
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(7,6))
     
     im = ax.imshow(variancelist)
     
@@ -219,9 +274,14 @@ def makeAntiPlots(alist, blist, rangelist, area,typeof):
     ax.set_yticks(np.arange(len(ilist)))
     # ... and label them with the respective list entries
     ax.set_xticklabels(rangelist)
-    ax.set_yticklabels(ilist)
+    ax.set_yticklabels(reversed(ilist))
     
-    plt.title("The variance in all point of the simulation using %s sampling."%(typeof))
+    for i in range(len(ilist)):
+        for j in range(len(rangelist)):
+            ax.text(j, i, "%.5f"%(variancelist[i][j]),
+                           ha="center", va="center", color="w")
+    
+    plt.title("The variance in all point of the\n simulation using %s sampling."%(typeof))
     plt.xlabel("samples")
     plt.ylabel("iterations")
     fig.colorbar(im, orientation = 'vertical', label = "Variance")
@@ -231,6 +291,8 @@ def makeAntiPlots(alist, blist, rangelist, area,typeof):
              rotation_mode="anchor")
     
     plt.show()
+    
+    return variancelist
     
 def antithetic():
     # The path length distribution is taken from the file
@@ -244,11 +306,11 @@ def antithetic():
     orthogonals1 = []
     orthogonals2 = []
     
-    randomlist = [1000,5000,10000,20000,30000]
+    randomlist = [100,500,1000,5000,10000,20000,30000]
     hyperlist = [100,500,1000,5000,10000]
     
     area1 = 9
-    area2 = 8.3765
+    area2 = 7.753
     
     with open("data/resultsantithetic.csv", 'r') as csvfile:
     
@@ -260,10 +322,17 @@ def antithetic():
                 randoms1.append(row)
             if row[0] == "random2":
                 randoms2.append(row)
+                
+                if int(row[3]) == 100 or int(row[3]) ==500:
+                    
+                    randoms1.append(row)
             if row[0] == "random3":
                 randoms3.append(row)
             if row[0] == "random4":
                 randoms4.append(row)
+                if int(row[3]) == 100 or int(row[3]) ==500:
+                    
+                    randoms3.append(row)
             if row[0] == "hypercube1":
                 hypers1.append(row)
             if row[0] == "hypercube2":
@@ -273,11 +342,44 @@ def antithetic():
             if row[0] == "orthoginal2":
                 orthogonals2.append(row)
             
-    makeAntiPlots(randoms1,randoms3,randomlist,area2,"random")
-    makeAntiPlots(randoms2,randoms4,hyperlist,area2,"random")
-    makeAntiPlots(hypers1,hypers2,hyperlist,area1,"latin hypercube")
-    makeAntiPlots(orthogonals1,orthogonals2,hyperlist,area1,"orthogonal")
+    var1 = makeAntiPlots(randoms1,randoms3,randomlist,area2,"random")
+    var2 = makeAntiPlots(randoms2,randoms4,hyperlist,area2,"random")
+    var3 = makeAntiPlots(hypers1,hypers2,hyperlist,area1,"latin hypercube")
+    var4 = makeAntiPlots(orthogonals1,orthogonals2,hyperlist,area1,"orthogonal")
     
+    somelist = [var1,var3,var4]
+    
+    ilist = [3000,3500,4000,4500,5000,5500]
+    sampleslist = []
+    
+    for var in range(len(somelist)):
+        sampleslist.append([])
+        
+        for j in range(len(ilist)):
+            
+            sampleslist[var].append(somelist[var][j][0])
+    
+    print(sampleslist)
+    variancePlot([var1[len(var1)-1],var3[len(var3)-1],var4[len(var4)-1]],hyperlist,randomlist,"samples","i",5500)
+    variancePlot(sampleslist,ilist,ilist,"iterations","s",100)
+    
+    
+    
+def variancePlot(variances,x,x2,typeof,othertype,parameter):
+    
+    plt.figure()
+    for variance in variances:
+        
+        if len(variance) == 5:
+            plt.plot(x,variance)
+        else:
+            plt.plot(x2,variance)
+    plt.title("The variance as function of %s at %s=%i"%(typeof,othertype,parameter))
+    plt.ylabel("Variance")
+    plt.xlabel("%s"%typeof)
+    plt.legend(["random","latin hypercube","orthogonal"])
+    
+    plt.show()
     
 def merge():
     
@@ -295,6 +397,9 @@ def merge():
                 if row[0] == "random2":
                     row[0] = "random3"
                 thelist.append(row)
+            
+            if len(thelist) == 3000:
+                break
                 
     with open("data/resultsnightloop_jordanrandom2.csv", 'r') as csvfile:
     
@@ -310,6 +415,8 @@ def merge():
                 elif row[0] == "random2":
                     row[0] = "random4"
                 thelist.append(row)
+            if len(thelist) == 6000:
+                break
                 
     with open("data/resultsnightloop_jordanhyper.csv", 'r') as csvfile:
     
@@ -320,6 +427,9 @@ def merge():
             if row[2] == row[3]:
                 
                 thelist.append(row)
+            
+            if len(thelist) == 9000:
+                break
                 
     with open("data/resultsnightloop_jordanorth.csv", 'r') as csvfile:
     
@@ -330,14 +440,17 @@ def merge():
             if row[2] == row[3]:
                 thelist.append(row)
                 
+            if len(thelist) == 12000:
+                break
+                
     with open("data/resultsantithetic.csv", 'a', newline = '') as csvfile:
             writer = csv.writer(csvfile, delimiter=',', quotechar='"')
         
             for row in thelist:
                 writer.writerow(row)
                 
-nonantithetic()
+#nonantithetic()
 
-antithetic()
+#antithetic()
                 
-#merge()
+merge()
