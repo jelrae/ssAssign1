@@ -228,19 +228,19 @@ def createHypercube(s,i):
 
             fraction2 += 1
             
-        # if j % 1000 == 0:
-        #
-        #     results.append(["hyper1",i,j,s,fraction1])
-        #     results.append(["hyper2", i, j, s, fraction2])
+        if j % 1000 == 0:
 
-    results.append(["hyper1",i,s,s,fraction1])
-    results.append(["hyper2", i, s, s, fraction2])
+            results.append(["orthogonal1",i,j,s,fraction1])
+            results.append(["orthogonal2", i, j, s, fraction2])
+
+    results.append(["orthogonal1",i,s,s,fraction1])
+    results.append(["orthogonal2", i, s, s, fraction2])
     return fraction1, fraction2, results
 
 def save(results):
     """ Saves the results to a csv file. """
         
-    filename = 'data/resultsnightloop_antilargeHyper.csv'
+    filename = 'data/resultsnightloop_antilargeOrth.csv'
         
     with open(filename, 'a', newline = '') as csvfile:
         writer = csv.writer(csvfile, delimiter=',', quotechar='"')
